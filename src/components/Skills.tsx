@@ -86,7 +86,7 @@ export function Skills() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top", 
-        end: "+=300%", 
+        end: "+=200%", 
         pin: true,
         scrub: 1,
         onUpdate: (self) => {
@@ -176,8 +176,8 @@ export function Skills() {
       ref={containerRef} 
       className="relative w-full bg-bg overflow-hidden"
     >
-      <div ref={stickyRef} className="h-screen w-full flex flex-col items-center pt-8 lg:pt-12 perspective-[2000px]">
-        <div className="relative w-full h-full max-w-[1600px] max-h-[800px] px-6 lg:px-12">
+      <div ref={stickyRef} className="h-screen w-full flex items-center justify-center perspective-[2000px]">
+        <div className="relative w-full h-full max-w-[1600px] max-h-[900px] px-6 lg:px-12">
           
           {/* Shards Container */}
           <div className="relative w-full h-full grid grid-cols-1 lg:block">
