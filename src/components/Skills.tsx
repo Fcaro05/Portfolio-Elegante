@@ -86,7 +86,7 @@ export function Skills() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top", 
-        end: "+=200%", 
+        end: "+=2000px", 
         pin: true,
         scrub: 1,
         onUpdate: (self) => {
@@ -264,25 +264,28 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
   }
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      style={{
-        rotateX: isLocked ? (isAnyHovered ? 0 : parallaxRotateX) : 0,
-        rotateY: isLocked ? (isAnyHovered ? 0 : parallaxRotateY) : 0,
-        clipPath: clipPaths[index],
-        zIndex: isHovered ? 30 : (index === 2 ? 10 : (index === 1 ? 11 : 12)),
-      }}
-      animate={{
-        scale: isHovered ? 1.02 : 1,
-        opacity: isAnyHovered && !isHovered ? 0.3 : 1,
-        filter: isAnyHovered && !isHovered ? "blur(12px)" : "blur(0px)",
-      }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden"
+    <div 
+      ref={ref} 
+      className="absolute inset-0 w-full h-full opacity-0"
+      style={{ zIndex: isHovered ? 30 : (index === 2 ? 10 : (index === 1 ? 11 : 12)) }}
     >
-      {/* Background Glow */}
+      <motion.div
+        onMouseEnter={onHover}
+        onMouseLeave={onLeave}
+        style={{
+          rotateX: isLocked ? (isAnyHovered ? 0 : parallaxRotateX) : 0,
+          rotateY: isLocked ? (isAnyHovered ? 0 : parallaxRotateY) : 0,
+          clipPath: clipPaths[index],
+        }}
+        animate={isLocked ? {
+          scale: isHovered ? 1.02 : 1,
+          opacity: isAnyHovered && !isHovered ? 0.3 : 1,
+          filter: isAnyHovered && !isHovered ? "blur(12px)" : "blur(0px)",
+        } : undefined}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden"
+      >
+        {/* Background Glow */}
       <div 
         className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700"
         style={{ background: `radial-gradient(circle at center, ${skill.color}, transparent)` }}
@@ -349,7 +352,8 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
       >
         <skill.icon size={128} />
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 });
 
