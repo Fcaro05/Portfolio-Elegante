@@ -99,7 +99,7 @@ const Pillar: React.FC<PillarProps> = ({
     <motion.div
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      data-cursor-text={isHovered ? "Explore" : pillar.title}
+      data-cursor-text={pillar.title}
       animate={{ 
         flex: isHovered ? 2 : (isAnyHovered ? 0.5 : 1),
       }}

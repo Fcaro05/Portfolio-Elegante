@@ -81,17 +81,23 @@ export function Skills() {
   useGSAP(() => {
     if (isMobile) return;
 
-    // The pinning timeline
+    // 1. Lock the section when it reaches the top
+    ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: "+=150%",
+      pin: true,
+    });
+
+    // 2. Start the epic animation immediately as it enters the screen
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top top", 
-        end: "+=150%", 
-        pin: true,
+        start: "top bottom", // Starts filling the void immediately after LogoCloud
+        end: "+=250%", // 100vh to scroll in + 150% pinned duration
         scrub: 1,
         onUpdate: (self) => {
-          // Lock interaction when shards are mostly assembled (progress > 0.4)
-          setIsLocked(self.progress >= 0.4 && self.progress <= 0.95);
+          setIsLocked(self.progress >= 0.6 && self.progress <= 0.95);
         }
       }
     });
@@ -99,8 +105,8 @@ export function Skills() {
     // Shard 0 (Dev) - From extreme Top-Left
     tl.fromTo(shardsRef.current[0], 
       { 
-        x: -2000, 
-        y: -1000, 
+        x: -1000, 
+        y: -500, 
         rotateX: 90, 
         rotateY: -90, 
         scale: 0.2, 
@@ -113,7 +119,7 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut",
+        ease: "power3.out",
         duration: 1
       }, 
       0
@@ -122,8 +128,8 @@ export function Skills() {
     // Shard 1 (Marketing) - From extreme Top-Right
     tl.fromTo(shardsRef.current[1], 
       { 
-        x: 2000, 
-        y: -500, 
+        x: 1000, 
+        y: -250, 
         rotateX: -90, 
         rotateY: 90, 
         scale: 0.2, 
@@ -136,7 +142,7 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut",
+        ease: "power3.out",
         duration: 1
       }, 
       0
@@ -146,7 +152,7 @@ export function Skills() {
     tl.fromTo(shardsRef.current[2], 
       { 
         x: 0, 
-        y: 2000, 
+        y: 1000, 
         rotateX: 120, 
         rotateY: 0, 
         scale: 0.2, 
@@ -159,7 +165,7 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut",
+        ease: "power3.out",
         duration: 1
       }, 
       0
@@ -237,6 +243,10 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
   const parallaxRotateX = useTransform(mouseY, [-0.5, 0.5], [15, -15]);
   const parallaxRotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]);
 
+  // Safely derive MotionValues to prevent Framer Motion from glitching when switching between raw numbers and MotionValues
+  const activeRotateX = useTransform(parallaxRotateX, (val) => isLocked && !isAnyHovered ? val : 0);
+  const activeRotateY = useTransform(parallaxRotateY, (val) => isLocked && !isAnyHovered ? val : 0);
+
   // Clip paths for the seamless shattered look (Desktop)
   const clipPaths = [
     "polygon(0 0, 60% 0, 40% 100%, 0 100%)", // Dev
@@ -266,27 +276,30 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
     );
   }
 
+  // Use Tailwind classes for z-index to prevent React from overwriting GSAP's inline `style` attribute
+  const zIndexClass = isHovered ? 'z-50' : (index === 2 ? 'z-10' : (index === 1 ? 'z-20' : 'z-30'));
+
   return (
     <div 
       ref={ref} 
-      className="absolute inset-0 w-full h-full opacity-0"
-      style={{ zIndex: isHovered ? 30 : (index === 2 ? 10 : (index === 1 ? 11 : 12)) }}
+      className={`absolute inset-0 w-full h-full pointer-events-none ${zIndexClass}`}
     >
       <motion.div
         onMouseEnter={onHover}
         onMouseLeave={onLeave}
+        data-cursor-text={skill.title}
         style={{
-          rotateX: isLocked ? (isAnyHovered ? 0 : parallaxRotateX) : 0,
-          rotateY: isLocked ? (isAnyHovered ? 0 : parallaxRotateY) : 0,
+          rotateX: activeRotateX,
+          rotateY: activeRotateY,
           clipPath: clipPaths[index],
         }}
-        animate={isLocked ? {
-          scale: isHovered ? 1.02 : 1,
-          opacity: isAnyHovered && !isHovered ? 0.3 : 1,
-          filter: isAnyHovered && !isHovered ? "blur(12px)" : "blur(0px)",
-        } : undefined}
+        animate={{
+          scale: isLocked && isHovered ? 1.02 : 1,
+          opacity: isLocked && isAnyHovered && !isHovered ? 0.3 : 1,
+          filter: isLocked && isAnyHovered && !isHovered ? "blur(12px)" : "blur(0px)",
+        }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden"
+        className="absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden pointer-events-auto"
       >
         {/* Background Glow */}
       <div 
@@ -296,44 +309,47 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
 
       {/* Content Positioning */}
       <div className={cn(
-        "absolute flex flex-col p-12",
-        index === 0 ? "top-0 left-0 w-1/2 h-full justify-center" : 
-        index === 1 ? "top-0 right-0 w-1/2 h-1/2 justify-end items-end text-right" :
-        "bottom-0 right-0 w-1/2 h-1/2 justify-start items-end text-right"
+        "absolute flex flex-col",
+        index === 0 ? "top-0 left-0 w-[38%] h-full justify-center items-start text-left pl-10 lg:pl-20 pr-4" : 
+        index === 1 ? "top-0 right-0 w-[40%] h-[50%] justify-start items-end text-right pr-12 lg:pr-24 pl-4 pt-16 lg:pt-24" :
+        "bottom-0 right-0 w-[55%] h-[50%] justify-end items-center text-center pb-12 lg:pb-20 px-8"
       )}>
         <motion.div
           animate={{ 
             y: isHovered ? -10 : 0,
             color: isHovered ? skill.color : "rgba(255,255,255,0.5)"
           }}
-          className="mb-6"
+          className="mb-4 lg:mb-6"
         >
-          <skill.icon size={isHovered ? 64 : 48} className="transition-all duration-500" />
+          <skill.icon size={isHovered ? 56 : 40} className="transition-all duration-500" />
         </motion.div>
 
-        <h3 className="text-5xl lg:text-7xl font-bold tracking-tighter mb-4 leading-none">
+        <h3 className="text-4xl lg:text-6xl font-bold tracking-tighter mb-4 leading-none">
           {skill.title}
         </h3>
 
         <AnimatePresence>
           {isHovered && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="max-w-md"
+              className="w-full max-w-[400px]"
             >
-              <p className="text-lg text-white/60 font-light mb-8 leading-relaxed">
+              <p className="text-base lg:text-lg text-white/60 font-light mb-6 leading-relaxed">
                 {skill.description}
               </p>
-              <div className={cn("flex flex-wrap gap-3", index !== 0 && "justify-end")}>
+              <div className={cn(
+                "flex flex-wrap gap-2", 
+                index === 0 ? "justify-start" : index === 1 ? "justify-end" : "justify-center"
+              )}>
                 {skill.items.map((item, i) => (
                   <motion.span
                     key={item}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs uppercase tracking-widest text-white/40"
+                    transition={{ delay: i * 0.04 }}
+                    className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] lg:text-xs uppercase tracking-widest text-white/40 whitespace-nowrap"
                   >
                     {item}
                   </motion.span>

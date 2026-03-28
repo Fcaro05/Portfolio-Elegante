@@ -2,6 +2,7 @@ import { SmoothScroll } from './components/SmoothScroll';
 import { Hero } from './components/Hero';
 import { LogoCloud } from './components/LogoCloud';
 import { Skills } from './components/Skills';
+import { Projects } from './components/Projects';
 import { Testimonials } from './components/Testimonials';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
@@ -47,6 +48,10 @@ export default function App() {
         <LogoCloud />
         
         <Skills />
+        
+        <div id="work">
+          <Projects />
+        </div>
         
         <div id="about">
           <Testimonials />

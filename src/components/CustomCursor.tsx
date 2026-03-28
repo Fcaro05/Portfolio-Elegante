@@ -22,16 +22,7 @@ export function CustomCursor() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      
-      // Check for interactive elements
+    const updateCursorState = (target: HTMLElement) => {
       const isInteractive = target.closest('button, a, .cursor-hover');
       const textReveal = target.closest('[data-cursor-text]');
 
@@ -43,6 +34,19 @@ export function CustomCursor() {
       } else {
         setCursorType('default');
       }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      if (!isVisible) setIsVisible(true);
+      
+      // Update cursor state on move to catch dynamic attribute changes
+      updateCursorState(e.target as HTMLElement);
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      updateCursorState(e.target as HTMLElement);
     };
 
     const handleMouseLeave = () => setIsVisible(false);
