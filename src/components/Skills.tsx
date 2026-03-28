@@ -86,7 +86,7 @@ export function Skills() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top", 
-        end: "+=2000px", 
+        end: "+=150%", 
         pin: true,
         scrub: 1,
         onUpdate: (self) => {
@@ -113,7 +113,8 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut" 
+        ease: "power2.inOut",
+        duration: 1
       }, 
       0
     );
@@ -135,7 +136,8 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut" 
+        ease: "power2.inOut",
+        duration: 1
       }, 
       0
     );
@@ -157,7 +159,8 @@ export function Skills() {
         rotateY: 0, 
         scale: 1, 
         opacity: 1, 
-        ease: "power2.inOut" 
+        ease: "power2.inOut",
+        duration: 1
       }, 
       0
     );
@@ -166,7 +169,7 @@ export function Skills() {
     tl.fromTo(".fracture-line", 
       { opacity: 0 },
       { opacity: 0.4, duration: 0.2 },
-      0.35
+      0.8
     );
 
   }, { scope: containerRef, dependencies: [isMobile] });
