@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useSpring, useMotionValue, AnimatePresence, useTransform, type MotionValue } from 'motion/react';
-import { Code2, Megaphone, TrendingUp, type LucideIcon } from 'lucide-react';
+import { Code2, Megaphone, TrendingUp, Atom, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -97,7 +97,7 @@ export function Skills() {
         end: "+=250%", // 100vh to scroll in + 150% pinned duration
         scrub: 1,
         onUpdate: (self) => {
-          setIsLocked(self.progress >= 0.6 && self.progress <= 0.95);
+          setIsLocked(self.progress >= 0.6);
         }
       }
     });
@@ -186,7 +186,7 @@ export function Skills() {
       className="relative w-full bg-bg overflow-hidden"
     >
       <div ref={stickyRef} className="h-screen w-full flex items-center justify-center perspective-[2000px]">
-        <div className="relative w-full h-full max-w-[1600px] max-h-[900px] px-6 lg:px-12">
+        <div className="relative w-full h-[75vh] max-w-[1600px] max-h-[800px] px-6 lg:px-12">
           
           {/* Shards Container */}
           <div className="relative w-full h-full grid grid-cols-1 lg:block">
@@ -299,7 +299,12 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
           filter: isLocked && isAnyHovered && !isHovered ? "blur(12px)" : "blur(0px)",
         }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden pointer-events-auto"
+        className={cn(
+          "absolute inset-0 w-full h-full cursor-pointer bg-white/[0.03] backdrop-blur-sm border border-white/5 group overflow-hidden pointer-events-auto",
+          index === 0 ? "rounded-l-[2rem] lg:rounded-l-[3rem]" : 
+          index === 1 ? "rounded-tr-[2rem] lg:rounded-tr-[3rem]" : 
+          "rounded-br-[2rem] lg:rounded-br-[3rem]"
+        )}
       >
         {/* Background Glow */}
       <div 
@@ -310,21 +315,21 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
       {/* Content Positioning */}
       <div className={cn(
         "absolute flex flex-col",
-        index === 0 ? "top-0 left-0 w-[38%] h-full justify-center items-start text-left pl-10 lg:pl-20 pr-4" : 
-        index === 1 ? "top-0 right-0 w-[40%] h-[50%] justify-start items-end text-right pr-12 lg:pr-24 pl-4 pt-16 lg:pt-24" :
-        "bottom-0 right-0 w-[55%] h-[50%] justify-end items-center text-center pb-12 lg:pb-20 px-8"
+        index === 0 ? "top-0 left-0 w-[38%] h-full justify-center items-start text-left pl-8 lg:pl-16 pr-4" : 
+        index === 1 ? "top-0 right-0 w-[40%] h-[50%] justify-center items-end text-right pr-8 lg:pr-16 pl-4" :
+        "bottom-0 right-0 w-[55%] h-[50%] justify-center items-center text-center px-8"
       )}>
         <motion.div
           animate={{ 
             y: isHovered ? -10 : 0,
             color: isHovered ? skill.color : "rgba(255,255,255,0.5)"
           }}
-          className="mb-4 lg:mb-6"
+          className="mb-2 lg:mb-4"
         >
-          <skill.icon size={isHovered ? 56 : 40} className="transition-all duration-500" />
+          <skill.icon size={isHovered ? 48 : 36} className="transition-all duration-500" />
         </motion.div>
 
-        <h3 className="text-4xl lg:text-6xl font-bold tracking-tighter mb-4 leading-none">
+        <h3 className="text-3xl lg:text-5xl font-bold tracking-tighter mb-3 leading-none">
           {skill.title}
         </h3>
 
@@ -334,9 +339,9 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="w-full max-w-[400px]"
+              className="w-full max-w-[360px]"
             >
-              <p className="text-base lg:text-lg text-white/60 font-light mb-6 leading-relaxed">
+              <p className="text-sm lg:text-base text-white/60 font-light mb-4 leading-relaxed">
                 {skill.description}
               </p>
               <div className={cn(
@@ -349,7 +354,7 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.04 }}
-                    className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] lg:text-xs uppercase tracking-widest text-white/40 whitespace-nowrap"
+                    className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] lg:text-[11px] uppercase tracking-widest text-white/40 whitespace-nowrap"
                   >
                     {item}
                   </motion.span>
@@ -360,16 +365,15 @@ const Shard = React.forwardRef<HTMLDivElement, ShardProps>(({
         </AnimatePresence>
       </div>
 
-      {/* Floating 3D Icon Accent */}
+      {/* Unified Background Accent - Forms a single icon when shards merge */}
       <motion.div
         animate={{ 
-          y: [0, -20, 0],
-          rotate: [0, 360, 0]
+          rotate: [0, 360]
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 opacity-5 pointer-events-none"
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 opacity-5 pointer-events-none flex items-center justify-center text-white"
       >
-        <skill.icon size={128} />
+        <Atom size={128} strokeWidth={1} />
       </motion.div>
       </motion.div>
     </div>

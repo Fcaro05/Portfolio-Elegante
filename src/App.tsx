@@ -3,6 +3,7 @@ import { Hero } from './components/Hero';
 import { LogoCloud } from './components/LogoCloud';
 import { Skills } from './components/Skills';
 import { Projects } from './components/Projects';
+import { Manifesto } from './components/Manifesto';
 import { Testimonials } from './components/Testimonials';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
@@ -48,6 +49,8 @@ export default function App() {
         <LogoCloud />
         
         <Skills />
+        
+        <Manifesto />
         
         <div id="work">
           <Projects />
